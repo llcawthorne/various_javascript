@@ -1,0 +1,17 @@
+{
+  "name": "typescript-react-todo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+  	"director": "^1.2.0",
+  	"react": "^0.13.3",
+  	"todomvc-app-css": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
