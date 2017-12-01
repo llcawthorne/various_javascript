@@ -1,17 +1,49 @@
 import React, { Component } from 'react';
 import { FormGroup, FormControl, InputGroup, Glyphicon } from 'react-bootstrap';
 import './App.css';
+import Gallery from './Gallery';
+import Profile from './Profile';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       query: '',
+      artist: null,
+      tracks: [],
     };
   }
 
   search() {
     console.log('this.state', this.state);
+    const BASE_URL = 'https://api.spotify.com/v1/search?';
+    let FETCH_URL = `${BASE_URL}q=${this.state.query}&type=artist&limit=1`;
+    const ALBUM_URL = 'https://api.spotify.com/v1/artists/';
+    const accessToken = 'BQDXsHRfLzzEwwjyKiuUcWfdEv30z3HfsLngQ_Jj6525Gwx4JymuHZCKBycJriJq-yg1PXmcBwEqnK1gNcJUkJc6bcPn39hfYijsR08zV3KASlb1xNOih4duAWmsasGXtUjL2CFuTEHW3E2HPvWhS0h6ZqLs4JY';
+
+    const myOptions = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      mode: 'cors',
+      cache: 'default',
+    };
+
+    fetch(FETCH_URL, myOptions)
+      .then(response => response.json())
+      .then((json) => {
+        const artist = json.artists.items[0];
+        this.setState({ artist });
+
+        FETCH_URL = `${ALBUM_URL}${artist.id}/top-tracks?country=US&`;
+        fetch(FETCH_URL, myOptions)
+          .then(response => response.json())
+          .then((json) => {
+            const { tracks } = json;
+            this.setState({ tracks });
+          });
+      });
   }
 
   render() {
@@ -36,15 +68,21 @@ class App extends Component {
             </InputGroup.Addon>
           </InputGroup>
         </FormGroup>
-        <div className="Profile">
-          <div>Artist Picture</div>
-          <div>Artist Name</div>
-        </div>
-        <div className="Gallery">
-          Gallery
-        </div>
+        {
+          this.state.artist !== null
+          ?
+            <div>
+              <Profile
+                artist={this.state.artist}
+              />
+              <Gallery
+                tracks={this.state.tracks}
+              />
+            </div>
+          : <div />
+        }
       </div>
-    )
+    );
   }
 }
 
